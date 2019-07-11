@@ -1,0 +1,5 @@
+<div class="example">
+  <% @options[:colors].each do |color| %>
+    <div class="color-palette" style='background: <%= color[:value] %>'><%= color[:name] %></div>
+  <% end %>
+</div>

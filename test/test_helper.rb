@@ -17,3 +17,55 @@ if ActiveSupport::TestCase.respond_to?(:fixture_path=)
   ActiveSupport::TestCase.file_fixture_path = ActiveSupport::TestCase.fixture_path + "/files"
   ActiveSupport::TestCase.fixtures :all
 end
+
+
+# coding: UTF-8
+$:.unshift(File.expand_path('../../lib', __FILE__))
+Encoding.default_internal = 'UTF-8'
+
+require 'redcarpet'
+require 'redcarpet/render_strip'
+require 'redcarpet/render_man'
+
+class Redcarpet::TestCase < ActiveSupport::TestCase
+  def assert_renders(html, markdown)
+    assert_equal html, render(markdown)
+  end
+
+  def render(markdown, options = {})
+    default_options = {
+      autolink: true,
+      tables: true,
+      fenced_code_blocks: true
+    }
+    options = options.fetch(:with, {})
+
+    if options.kind_of?(Array)
+      options = Hash[options.map {|o| [o, true]}]
+    end
+
+    render = begin
+      renderer.new(options)
+    rescue ArgumentError
+      renderer.new
+    end
+    
+    parser = Redcarpet::Markdown.new(render, default_options)
+
+    parser.render(markdown).chomp
+  end
+
+  private
+
+  def renderer
+    @renderer ||= Styleguide::MarkdownRenderer
+  end
+
+  # Imported from Active Support
+  class ::String
+    def strip_heredoc
+      indent = scan(/^ *(?=\S)/).min.size || 0
+      gsub(/^[ \t]{#{indent}}/, '')
+    end
+  end
+end

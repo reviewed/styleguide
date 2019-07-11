@@ -1,0 +1,10 @@
+<div class="example" style="background: <%= @options[:background] || '#fff' %>">
+  <iframe
+    src="/styleguide/example?example=<%= Base64.urlsafe_encode64(@code) %>&background=<%= Base64.urlsafe_encode64(@options[:background] || '#fff') %>"
+    width="<%= @options[:width] || '100%' %>"
+    height="<%= @options[:height] || 'auto' %>">foo</iframe>
+</div>
+
+<div class="example-source">
+  <%= @block_code.html_safe %>
+</div>
